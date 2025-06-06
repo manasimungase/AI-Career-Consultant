@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Navigation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 15px;
+        }
+        .nav-link {
+            color: #2c3e50;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+        }
+        .nav-link:hover {
+            background-color: #e9ecef;
+            color: #2c3e50;
+        }
+        .nav-link.active {
+            background-color: #3498db;
+            color: white;
+        }
+        .profile-section {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        .profile-picture {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+        .premium-badge {
+            background-color: #f1c40f;
+            color: #2c3e50;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-top: 5px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-section">
+        <img src="{{ user.profile_picture or url_for('static', filename='images/default-profile.png') }}" 
+             alt="Profile" class="profile-picture">
+        <h6 class="mb-1">{{ user.username }}</h6>
+        <small class="text-muted d-block">{{ user.email }}</small>
+        {% if user.account_type == 'premium' %}
+        <span class="premium-badge">
+            <i class="fas fa-crown"></i> Premium
+        </span>
+        {% endif %}
+    </div>
+
+    <div class="nav flex-column">
+        {% if user.is_admin %}
+        <!-- Admin Navigation -->
+        <a href="/admin/dashboard?framed=true" target="main" class="nav-link">
+            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+        </a>
+        <a href="/admin/users?framed=true" target="main" class="nav-link">
+            <i class="fas fa-users me-2"></i> User Management
+        </a>
+        <a href="/admin/analytics?framed=true" target="main" class="nav-link">
+            <i class="fas fa-chart-line me-2"></i> Analytics
+        </a>
+        <a href="/admin/logs?framed=true" target="main" class="nav-link">
+            <i class="fas fa-history me-2"></i> System Logs
+        </a>
+        {% else %}
+        <!-- User Navigation -->
+        <a href="/welcome?framed=true" target="main" class="nav-link">
+            <i class="fas fa-home me-2"></i> Home
+        </a>
+        <a href="/resumeparser?framed=true" target="main" class="nav-link">
+            <i class="fas fa-file-alt me-2"></i> Resume Parser
+        </a>
+        <a href="/resumebuilder?framed=true" target="main" class="nav-link">
+            <i class="fas fa-pencil-alt me-2"></i> Resume Builder
+        </a>
+        <a href="/matchresume?framed=true" target="main" class="nav-link">
+            <i class="fas fa-check-double me-2"></i> Resume Matcher
+        </a>
+        <a href="/atschecker?framed=true" target="main" class="nav-link">
+            <i class="fas fa-robot me-2"></i> ATS Checker
+        </a>
+        <a href="/aichatbot?framed=true" target="main" class="nav-link">
+            <i class="fas fa-comments me-2"></i> AI Assistant
+        </a>
+        {% endif %}
+        
+        <!-- Common Navigation Items -->
+        <a href="/profile" target="main" class="nav-link">
+            <i class="fas fa-user me-2"></i> My Profile
+        </a>
+        <a href="javascript:parent.handleLogout();" class="nav-link text-danger">
+            <i class="fas fa-sign-out-alt me-2"></i> Logout
+        </a>
+    </div>
+
+    <script>
+        // Highlight active link based on current page
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = parent.frames['main'].location.pathname;
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

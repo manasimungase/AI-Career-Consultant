@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>AI-Powered Resume Parser</title>
+    <style>
+        .copy-button {
+            transition: all 0.3s ease;
+        }
+        .copy-button:hover {
+            transform: scale(1.05);
+        }
+        .section-content {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .section-content:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+        
+        /* Loading Animation Styles */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .loading-circle {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(59, 130, 246, 0.1);
+            border-left-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        .loading-pulse {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.2);
+            animation: pulse-ring 1.5s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.7); opacity: 0.3; }
+            50% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(0.7); opacity: 0.3; }
+        }
+        
+        /* Fade-in animation for results */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Shimmer effect for loading state */
+        .shimmer {
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.1) 25%,
+                rgba(255, 255, 255, 0.2) 37%,
+                rgba(255, 255, 255, 0.1) 63%
+            );
+            background-size: 400% 100%;
+            animation: shimmer 1.4s ease infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 100% 50%; }
+            100% { background-position: 0 50%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="relative isolate overflow-hidden bg-gray-900">
+        <svg class="absolute inset-0 -z-10 h-full w-full stroke-white/10 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
+            aria-hidden="true">
+            <defs>
+                <pattern id="983e3e4c-de6d-4c3f-8d64-b9761d1534cc" width="200" height="200" x="50%" y="-1"
+                    patternUnits="userSpaceOnUse">
+                    <path d="M.5 200V.5H200" fill="none" />
+                </pattern>
+            </defs>
+            <svg x="50%" y="-1" class="overflow-visible fill-gray-800/20">
+                <path d="M-200 0h201v201h-201Z M600 0h201v201h-201Z M-400 600h201v201h-201Z M200 800h201v201h-201Z"
+                    stroke-width="0" />
+            </svg>
+            <rect width="100%" height="100%" stroke-width="0" fill="url(#983e3e4c-de6d-4c3f-8d64-b9761d1534cc)" />
+        </svg>
+        <div class="absolute left-[calc(50%-4rem)] top-10 -z-10 transform-gpu blur-3xl sm:left-[calc(50%-18rem)] lg:left-48 lg:top-[calc(50%-30rem)] xl:left-[calc(50%-24rem)]"
+            aria-hidden="true">
+            <div class="aspect-[1108/632] w-[69.25rem] bg-gradient-to-r from-[#80caff] to-[#4f46e5] opacity-20"
+                style="clip-path: polygon(73.6% 51.7%, 91.7% 11.8%, 100% 46.4%, 97.4% 82.2%, 92.5% 84.9%, 75.7% 64%, 55.3% 47.5%, 46.5% 49.4%, 45% 62.9%, 50.3% 87.2%, 21.3% 64.1%, 0.1% 100%, 5.4% 51.1%, 21.4% 63.9%, 58.9% 0.2%, 73.6% 51.7%)">
+            </div>
+        </div>
+        <div class="mx-auto max-w-7xl px-6 pb-24 pt-10 sm:pb-32 lg:flex lg:px-8 lg:py-40">
+            <div class="mx-auto max-w-2xl flex-shrink-0 lg:mx-0 lg:max-w-xl lg:pt-8">
+                <img class="h-11" src="https://res.cloudinary.com/dtsuvx8dz/image/upload/v1706986565/hqatxpsjdg3zeql20jfe.png" alt="Your Company">
+                <div class="mt-24 sm:mt-32 lg:mt-16">
+                    <a href="#" class="inline-flex space-x-6">
+                        <span
+                            class="rounded-full bg-blue-500/10 px-3 py-1 text-sm font-semibold leading-6 text-blue-400 ring-1 ring-inset ring-blue-500/20">What's
+                            new</span>
+                        <span class="inline-flex items-center space-x-2 text-sm font-medium leading-6 text-gray-300">
+                            <span>Just shipped v1.0</span>
+                            <svg class="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd"
+                                    d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                    </a>
+                </div>
+                <h1 class="mt-10 text-4xl font-bold tracking-tight text-white sm:text-5xl">Revolutionize Your Recruitment with Next-Gen Resume Parsing</h1>
+                <p class="mt-6 text-lg leading-8 text-gray-300">Unlock the potential of every application with our advanced resume parser, designed to enhance the speed and accuracy of
+                your hiring decisions.</p>
+                <div class="mt-10 flex items-center gap-x-6">
+                    <input type="file" id="resumeInput" accept=".pdf,.docx" class="drop-shadow-md bg-white/10 font-semibold leading-6 text-gray-900 border border-blue-300 py-2 px-4 rounded-2xl block w-full text-sm text-slate-500
+                                                        file:mr-4 file:py-2 file:px-4
+                                                        file:rounded-full file:border-0
+                                                        file:text-sm file:font-semibold
+                                                        file:bg-blue-50 file:text-blue-400
+                                                        hover:file:bg-blue-100">
+                    <button id="parseButton" onclick="parseResume()"
+                        class="my-2 bg-blue-500 px-8 rounded-2xl py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-400/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        <span id="parseButtonText">Upload & Parse</span>
+                        <div id="loadingSpinner" class="hidden animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    </button>
+                </div>
+            </div>
+            <div class="mx-auto mt-16 flex max-w-2xl sm:mt-24 lg:ml-10 lg:mr-0 lg:mt-40 lg:max-w-none lg:flex-none xl:ml-32">
+                <div class="max-w-3xl flex-none sm:max-w-5xl lg:max-w-none">
+                    <img src="https://res.cloudinary.com/dtsuvx8dz/image/upload/v1716357077/o1imiun4wwcpia9uucgs.gif"
+                        alt="App screenshot" width="2432" height="1442"
+                        class="w-[15rem] rounded-md bg-white/5 shadow-2xl ring-1 ring-white/10">
+                </div>
+            </div>
+        </div>
+
+        <div class="w-screen h-full pb-8">
+            <div class="flex flex-col justify-center items-center text-white">
+                <div id="output" class="border border-1 border-white/20 max-w-7xl p-8 rounded-xl backdrop-blur-sm bg-black/20"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+    <script>
+        async function copyToClipboard(text, buttonId) {
+            try {
+                await navigator.clipboard.writeText(text);
+                const button = document.getElementById(buttonId);
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.classList.add('pulse');
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('pulse');
+                }, 1500);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            }
+        }
+
+        function formatAllContent(skills, summary, experience, education) {
+            return `SKILLS:\n${skills.length ? skills.join(', ') : 'Not Found'}\n\nSUMMARY:\n${summary || 'Not Found'}\n\nEXPERIENCE:\n${experience || 'Not Found'}\n\nEDUCATION:\n${education || 'Not Found'}`;
+        }
+
+        function createSectionWithCopy(title, content, id) {
+            if (!content) content = 'Not Found';
+            return `
+                <div class="mt-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-2xl font-bold text-white">${title}</h3>
+                        <button id="copy-${id}" 
+                                onclick="copyToClipboard(\`${content.replace(/`/g, '\\`')}\`, 'copy-${id}')"
+                                class="copy-button bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 px-4 py-1 rounded-lg text-sm flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            Copy
+                        </button>
+                    </div>
+                    <div class="section-content">
+                        <pre class="text-gray-300 whitespace-pre-wrap">${content}</pre>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function parseResume() {
+            const fileInput = document.getElementById('resumeInput');
+            const parseButton = document.getElementById('parseButton');
+            const parseButtonText = document.getElementById('parseButtonText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const output = document.getElementById('output');
+
+            if (!fileInput.files.length) {
+                alert('Please select a file');
+                return;
+            }
+
+            // Show loading state
+            parseButtonText.classList.add('hidden');
+            loadingSpinner.classList.remove('hidden');
+            
+            // Show animated loading state
+            output.innerHTML = `
+                <div class="loading-container">
+                    <div class="relative">
+                        <div class="loading-circle absolute inset-0"></div>
+                        <div class="loading-pulse"></div>
+                    </div>
+                    <div class="mt-6 text-blue-400 font-semibold">Processing your resume</div>
+                    <div class="mt-2 flex gap-1">
+                        <div class="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style="animation-delay: 0s;"></div>
+                        <div class="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style="animation-delay: 0.2s;"></div>
+                        <div class="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style="animation-delay: 0.4s;"></div>
+                    </div>
+                    <div class="mt-4 max-w-md">
+                        <div class="h-4 bg-blue-500/10 rounded shimmer mb-2"></div>
+                        <div class="h-4 bg-blue-500/10 rounded shimmer mb-2 w-3/4"></div>
+                        <div class="h-4 bg-blue-500/10 rounded shimmer w-1/2"></div>
+                    </div>
+                </div>
+            `;
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            try {
+                // Add artificial delay for better UX
+                await new Promise(resolve => setTimeout(resolve, 3000));
+
+                if (file.type === "application/pdf") {
+                    reader.onload = function(event) {
+                        const typedArray = new Uint8Array(event.target.result);
+                        pdfjsLib.getDocument(typedArray).promise.then(pdf => {
+                            let text = "";
+                            let countPromises = [];
+                            for (let i = 1; i <= pdf.numPages; i++) {
+                                countPromises.push(
+                                    pdf.getPage(i).then(page => page.getTextContent())
+                                        .then(textContent => {
+                                            textContent.items.forEach(item => text += item.str + " ");
+                                        })
+                                );
+                            }
+                            Promise.all(countPromises).then(() => processText(text));
+                        });
+                    };
+                    reader.readAsArrayBuffer(file);
+                } else {
+                    reader.onload = function(event) {
+                        processText(event.target.result);
+                    };
+                    reader.readAsText(file);
+                }
+            } catch (error) {
+                console.error('Error processing file:', error);
+                output.innerHTML = `
+                    <div class="text-red-500 p-4 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Error processing the file. Please try again.
+                        </div>
+                    </div>
+                `;
+            } finally {
+                // Reset button state
+                parseButtonText.classList.remove('hidden');
+                loadingSpinner.classList.add('hidden');
+            }
+        }
+
+        function processText(text) {
+            const skills = extractSkills(text);
+            const summary = extractSection(text, ['professional summary', 'summary', 'profile'], ['experience', 'education', 'skills']);
+            const experience = extractSection(text, ['experience', 'work history', 'employment', 'professional experience'], ['education', 'skills', 'certifications']);
+            const education = extractSection(text, ['education', 'academic background', 'academic qualifications'], ['experience', 'skills', 'certifications']);
+            
+            const allContent = formatAllContent(skills, summary, experience, education);
+            
+            // Add fade-in animation to results
+            document.getElementById('output').innerHTML = `
+                <div class="fade-in">
+                    <div class="flex justify-end mb-6">
+                        <button id="copy-all" 
+                                onclick="copyToClipboard(\`${allContent.replace(/`/g, '\\`')}\`, 'copy-all')"
+                                class="copy-button bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm flex items-center gap-2 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            Copy All Content
+                        </button>
+                    </div>
+                    ${createSectionWithCopy('Skills', skills.length ? skills.join(', ') : 'Not Found', 'skills')}
+                    ${createSectionWithCopy('Summary', summary, 'summary')}
+                    ${createSectionWithCopy('Experience', experience, 'experience')}
+                    ${createSectionWithCopy('Education', education, 'education')}
+                </div>
+            `;
+        }
+
+        function extractSkills(text) {
+            const skillKeywords = [
+                // Technical Skills
+                "JavaScript", "HTML", "CSS", "Python", "Java", "PHP", "C++", "SQL", "React", "Node.js", 
+                "Machine Learning", "AI", "Data Science", "Cloud Computing", "DevOps", "Cybersecurity",
+                "AWS", "Azure", "Docker", "Kubernetes", "Git", "CI/CD", "REST API", "GraphQL",
+                "MongoDB", "PostgreSQL", "MySQL", "Redis", "TypeScript", "Vue.js", "Angular",
+                
+                // Soft Skills
+                "Communication", "Teamwork", "Problem-Solving", "Time Management", "Leadership",
+                "Project Management", "Critical Thinking", "Adaptability", "Creativity", "Collaboration",
+                
+                // Business Skills
+                "HR", "Marketing", "Finance", "Sales", "Business Analysis", "Agile", "Scrum",
+                "Strategic Planning", "Customer Service", "Product Management", "Data Analysis",
+                "Digital Marketing", "SEO", "Content Marketing", "Social Media Marketing"
+            ];
+            return skillKeywords.filter(skill => text.toLowerCase().includes(skill.toLowerCase()));
+        }
+
+        function extractSection(text, startKeywords, stopKeywords) {
+            let startIndex = -1;
+            let endIndex = text.length;
+            
+            // Find the earliest occurrence of any start keyword
+            for (let keyword of startKeywords) {
+                let index = text.toLowerCase().indexOf(keyword.toLowerCase());
+                if (index !== -1 && (startIndex === -1 || index < startIndex)) {
+                    startIndex = index;
+                }
+            }
+            
+            if (startIndex === -1) return "";
+            
+            // Find the earliest occurrence of any stop keyword after the start index
+            for (let keyword of stopKeywords) {
+                let index = text.toLowerCase().indexOf(keyword.toLowerCase(), startIndex + 10);
+                if (index !== -1 && index < endIndex) {
+                    endIndex = index;
+                }
+            }
+            
+            let extractedText = text.substring(startIndex, endIndex).trim();
+            
+            // Clean up the extracted text
+            extractedText = extractedText
+                .replace(/([.!?])\s*(?=[A-Z])/g, '$1\n\n') // Add newlines after sentences
+                .replace(/\s+/g, ' ') // Normalize whitespace
+                .trim();
+            
+            return extractedText;
+        }
+    </script>
+</body>
+</html>

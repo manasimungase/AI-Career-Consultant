@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Matcher</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            border-radius: 10px 10px 0 0;
+            padding: 10px 20px;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .alert {
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+        .progress {
+            height: 25px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+        .progress-bar {
+            line-height: 25px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .resume-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+        .keywords-section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header text-center">
+                <h2>Job Description and Resume Matcher</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/matcher" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="job_description"><strong>Job Description:</strong></label>
+                        <textarea class="form-control" id="job_description" name="job_description" rows="5" required 
+                                placeholder="Paste the job description here..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="resumes"><strong>Upload Resumes:</strong></label>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Please upload at least 5 resumes for comparison
+                        </div>
+                        <input type="file" class="form-control" id="resumes" name="resumes" multiple required 
+                               accept=".pdf, .docx, .txt">
+                        <small class="form-text text-muted">Supported formats: PDF, DOCX, TXT</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">
+                        <i class="fas fa-search"></i> Match Resumes
+                    </button>
+                </form>
+
+                {% if message %}
+                    <div class="alert alert-info mt-4">
+                        <h4 class="alert-heading">Analysis Results</h4>
+                        <p>{{ message }}</p>
+                        
+                        {% if top_resumes %}
+                            <hr>
+                            <h5>Top Matching Resumes:</h5>
+                            {% for index in range(top_resumes|length) %}
+                                <div class="resume-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0">{{ top_resumes[index] }}</h6>
+                                        <span class="badge badge-primary">{{ similarity_scores[index] }}% Match</span>
+                                    </div>
+                                    <div class="progress mt-2">
+                                        <div class="progress-bar {% if similarity_scores[index] >= 75 %}bg-success
+                                                               {% elif similarity_scores[index] >= 50 %}bg-warning
+                                                               {% else %}bg-danger{% endif %}"
+                                             role="progressbar"
+                                             style="width: {{ similarity_scores[index] }}%"
+                                             aria-valuenow="{{ similarity_scores[index] }}"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100">
+                                            {{ similarity_scores[index] }}%
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            
+                            {% if job_keywords %}
+                                <div class="keywords-section">
+                                    <h5>Key Job Requirements:</h5>
+                                    <div class="d-flex flex-wrap">
+                                        {% for keyword in job_keywords %}
+                                            <span class="badge badge-info m-1">{{ keyword }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    
+    <script>
+        // File input validation
+        document.getElementById('resumes').addEventListener('change', function(e) {
+            if (e.target.files.length < 5) {
+                alert('Please select at least 5 resume files for comparison');
+                e.target.value = '';
+            }
+        });
+    </script>
+</body>
+</html> 

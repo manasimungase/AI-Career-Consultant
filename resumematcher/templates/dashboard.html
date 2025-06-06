@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - ResumeMatcher</title>
+    <script>
+        // Prevent the page from being loaded in a frame if it's already in one
+        if (window !== window.top) {
+            window.top.location.href = window.location.href;
+        }
+        
+        // Handle logout properly across frames
+        function handleLogout() {
+            // Clear all frames and redirect to logout
+            window.top.location.href = "/logout";
+        }
+    </script>
+</head>
+<frameset cols="250,*" border="0" frameborder="0">
+    <frame name="nav" src="/navigation" scrolling="auto" noresize>
+    <frame name="main" src="/welcome" scrolling="auto" noresize>
+    <noframes>
+<body>
+            <p>Your browser does not support frames.</p>
+</body>
+    </noframes>
+</frameset>
+</html>

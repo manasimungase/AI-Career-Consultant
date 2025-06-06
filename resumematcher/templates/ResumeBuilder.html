@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resume Builder</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    :root {
+      --primary-color: #2563eb;
+      --secondary-color: #1e40af;
+      --accent-color: #3b82f6;
+      --text-primary: #1f2937;
+      --text-secondary: #4b5563;
+      --bg-primary: #ffffff;
+      --bg-secondary: #f3f4f6;
+      --border-color: #e5e7eb;
+      --shadow-color: rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -100% 0;
+      }
+      100% {
+        background-position: 100% 0;
+      }
+    }
+
+    body {
+      background: var(--bg-secondary);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--text-primary);
+      padding: 20px;
+      position: relative;
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8) 0%, transparent 70%),
+        radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.8) 0%, transparent 70%),
+        radial-gradient(circle at 0% 100%, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .container {
+      background: var(--bg-primary);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px var(--shadow-color);
+      padding: 40px;
+      width: 95%;
+      max-width: 1200px;
+      margin: 40px auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--primary-color);
+      animation: shimmer 3s infinite linear;
+      background-size: 200% 100%;
+    }
+
+    h1 {
+      color: var(--primary-color);
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      font-weight: 600;
+      position: relative;
+    }
+
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: var(--primary-color);
+      border-radius: 2px;
+    }
+
+    h3 {
+      color: var(--secondary-color);
+      font-size: 1.4rem;
+      margin: 30px 0 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h3::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: var(--primary-color);
+      border-radius: 2px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+      outline: none;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .btn {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 24px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      background: var(--secondary-color);
+      transform: translateY(-2px);
+    }
+
+    .add-btn {
+      background: transparent;
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .add-btn:hover {
+      background: rgba(37, 99, 235, 0.1);
+    }
+
+    .section-container {
+      background: var(--bg-secondary);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 25px;
+      transition: all 0.3s ease;
+    }
+
+    .section-container:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px var(--shadow-color);
+    }
+
+    .education-section {
+      display: grid;
+      gap: 20px;
+    }
+
+    .education-entry {
+      background: var(--bg-secondary);
+      padding: 20px;
+      border-radius: 15px;
+      border: 2px solid var(--border-color);
+    }
+
+    .resume-preview {
+      margin-top: 40px;
+      padding: 30px;
+      background: var(--bg-secondary);
+      border-radius: 15px;
+    }
+
+    .resume-preview h2 {
+      color: var(--secondary-color);
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .latex-code {
+      width: 100%;
+      height: 300px;
+      padding: 20px;
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    .copy-btn {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .copy-btn:hover {
+      background: var(--secondary-color);
+    }
+
+    .copy-success {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #10b981;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 10px;
+      animation: slideIn 0.3s ease-out;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+
+    /* Update scrollbar for white theme */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+
+    /* Add subtle animation for container entrance */
+    @keyframes containerFloat {
+      0% {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Resume Builder</h1>
+    <form id="resumeForm">
+      <!-- Basic Information -->
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" placeholder="John Doe" required />
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="text" id="phone" placeholder="Format: +91-123-456-7890" required />
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="john.doe@example.com" required />
+      </div>
+      <div class="form-group">
+        <label for="linkedin">LinkedIn Profile URL</label>
+        <input type="url" id="linkedin" placeholder="https://linkedin.com/in/johndoe" required />
+      </div>
+      <div class="form-group">
+        <label for="github">GitHub Profile URL</label>
+        <input type="url" id="github" placeholder="https://github.com/johndoe" required />
+      </div>
+
+      <!-- Summary -->
+      <div class="form-group">
+        <label for="summary">Summary</label>
+        <textarea id="summary" placeholder="A brief summary of your profile (e.g., Passionate software developer with 3+ years of experience in web development...)"></textarea>
+      </div>
+
+      <!-- Education -->
+      <h3>Education</h3>
+      <div id="education-section">
+        <!-- Higher Education Entry -->
+        <div class="education-entry">
+          <h4 class="education-level">Higher Education</h4>
+          <div class="form-group">
+            <label for="degreeName">Degree Name</label>
+            <input type="text" class="degreeName" placeholder="B.Tech in Computer Science" required />
+          </div>
+          <div class="form-group">
+            <label for="degreeCollege">College Name</label>
+            <input type="text" class="degreeCollege" placeholder="ABC College" required />
+          </div>
+          <div class="form-group">
+            <label for="degreeUniversity">University Name</label>
+            <input type="text" class="degreeUniversity" placeholder="XYZ University" required />
+          </div>
+          <div class="form-group">
+            <label for="degreeYear">Degree Year</label>
+            <input type="text" class="degreeYear" placeholder="2021" required />
+          </div>
+          <div class="form-group">
+            <label for="degreeCGPA">Degree CGPA</label>
+            <input type="text" class="degreeCGPA" placeholder="9.5" required />
+          </div>
+        </div>
+
+        <!-- 12th Standard Entry -->
+        <div class="education-entry">
+          <h4 class="education-level">12th Standard</h4>
+          <div class="form-group">
+            <label for="twelfthSchool">School Name</label>
+            <input type="text" class="twelfthSchool" placeholder="ABC Higher Secondary School" required />
+          </div>
+          <div class="form-group">
+            <label for="twelfthBoard">Board</label>
+            <input type="text" class="twelfthBoard" placeholder="CBSE" required />
+          </div>
+          <div class="form-group">
+            <label for="twelfthYear">Year of Completion</label>
+            <input type="text" class="twelfthYear" placeholder="2017" required />
+          </div>
+          <div class="form-group">
+            <label for="twelfthPercentage">Percentage/CGPA</label>
+            <input type="text" class="twelfthPercentage" placeholder="95%" required />
+          </div>
+        </div>
+
+        <!-- 10th Standard Entry -->
+        <div class="education-entry">
+          <h4 class="education-level">10th Standard</h4>
+          <div class="form-group">
+            <label for="tenthSchool">School Name</label>
+            <input type="text" class="tenthSchool" placeholder="ABC School" required />
+          </div>
+          <div class="form-group">
+            <label for="tenthBoard">Board</label>
+            <input type="text" class="tenthBoard" placeholder="CBSE" required />
+          </div>
+          <div class="form-group">
+            <label for="tenthYear">Year of Completion</label>
+            <input type="text" class="tenthYear" placeholder="2015" required />
+          </div>
+          <div class="form-group">
+            <label for="tenthPercentage">Percentage/CGPA</label>
+            <input type="text" class="tenthPercentage" placeholder="92%" required />
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn add-btn" onclick="addEducation()">Add Another Course</button>
+
+      <!-- Experience -->
+      <h3>Experience</h3>
+      <div id="experience-section">
+        <div class="experience-entry">
+          <div class="form-group">
+            <label for="expTitle">Job Title</label>
+            <input type="text" class="expTitle" placeholder="Software Engineer" required />
+          </div>
+          <div class="form-group">
+            <label for="expCompany">Company Name</label>
+            <input type="text" class="expCompany" placeholder="ABC Corp" required />
+          </div>
+          <div class="form-group">
+            <label for="expLocation">Location</label>
+            <input type="text" class="expLocation" placeholder="Austin, TX" required />
+          </div>
+          <div class="form-group">
+            <label for="expStartDate">Start Date</label>
+            <input type="text" class="expStartDate" placeholder="June 2020" required />
+          </div>
+          <div class="form-group">
+            <label for="expEndDate">End Date</label>
+            <input type="text" class="expEndDate" placeholder="Present" required />
+          </div>
+          <div class="form-group">
+            <label for="expResponsibilities">Responsibilities</label>
+            <textarea class="expResponsibilities" placeholder="Developed web applications using React..."></textarea>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn add-btn" onclick="addExperience()">Add Another Experience</button>
+
+      <!-- Projects -->
+      <h3>Projects</h3>
+      <div id="projects-section">
+        <div class="project-entry">
+          <div class="form-group">
+            <label for="projectName">Project Name</label>
+            <input type="text" class="projectName" placeholder="Gitlytics" required />
+          </div>
+          <div class="form-group">
+            <label for="projectTech">Technologies Used</label>
+            <input type="text" class="projectTech" placeholder="Python, Flask, React" required />
+          </div>
+          <div class="form-group">
+            <label for="projectDescription">Project Description</label>
+            <textarea class="projectDescription" placeholder="Developed a full-stack web application..."></textarea>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn add-btn" onclick="addProject()">Add Another Project</button>
+
+      <!-- Certifications -->
+      <h3>Certifications</h3>
+      <div id="certifications-section">
+        <div class="certification-entry">
+          <div class="form-group">
+            <label for="certName">Certification Name</label>
+            <input type="text" class="certName" placeholder="AWS Certified Developer" required />
+          </div>
+          <div class="form-group">
+            <label for="certOrg">Issuing Organization</label>
+            <input type="text" class="certOrg" placeholder="Amazon" required />
+          </div>
+          <div class="form-group">
+            <label for="certYear">Year</label>
+            <input type="text" class="certYear" placeholder="2022" required />
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn add-btn" onclick="addCertification()">Add Another Certification</button>
+
+      <!-- Skills -->
+      <div class="form-group">
+        <label for="skills">Technical Skills</label>
+        <textarea id="skills" placeholder="Enter your skills separated by commas (e.g., Java, Python, React, Git)"></textarea>
+      </div>
+
+      <!-- Additional Section: Languages -->
+      <h3>Languages</h3>
+      <div class="form-group">
+        <label for="languages">Languages Known</label>
+        <textarea id="languages" placeholder="Enter languages separated by commas (e.g., English, Spanish, French)"></textarea>
+      </div>
+
+      <!-- Additional Section: Hobbies -->
+      <h3>Hobbies</h3>
+      <div class="form-group">
+        <label for="hobbies">Hobbies</label>
+        <textarea id="hobbies" placeholder="Enter your hobbies separated by commas (e.g., Reading, Traveling, Coding)"></textarea>
+      </div>
+
+      <!-- Awards & Achievements -->
+      <h3>Awards & Achievements</h3>
+      <div id="awards-section">
+        <div class="award-entry">
+          <div class="form-group">
+            <label for="awardName">Award Name</label>
+            <input type="text" class="awardName" placeholder="Best Employee of the Year" required />
+          </div>
+          <div class="form-group">
+            <label for="awardOrg">Issuing Organization</label>
+            <input type="text" class="awardOrg" placeholder="ABC Corporation" required />
+          </div>
+          <div class="form-group">
+            <label for="awardYear">Year</label>
+            <input type="text" class="awardYear" placeholder="2023" required />
+          </div>
+          <div class="form-group">
+            <label for="awardDescription">Description</label>
+            <textarea class="awardDescription" placeholder="Brief description of the award and its significance..."></textarea>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn add-btn" onclick="addAward()">Add Another Award</button>
+
+      <!-- Publications & Research -->
+      <h3>Publications & Research</h3>
+      <div id="publications-section">
+        <div class="publication-entry">
+          <div class="form-group">
+            <label for="pubTitle">Publication Title</label>
+            <input type="text" class="pubTitle" placeholder="Title of your paper/research" required />
+          </div>
+          <div class="form-group">
+            <label for="pubAuthors">Authors</label>
+            <input type="text" class="pubAuthors" placeholder="List of authors (e.g., Smith, J., Doe, R.)" required />
+          </div>
+          <div class="form-group">
+            <label for="pubVenue">Publication Venue</label>
+            <input type="text" class="pubVenue" placeholder="Journal/Conference name" required />
+          </div>
+          <div class="form-group">
+            <label for="pubYear">Year</label>
+            <input type="text" class="pubYear" placeholder="2023" required />
+          </div>
+          <div class="form-group">
+            <label for="pubDOI">DOI/Link (optional)</label>
+            <input type="text" class="pubDOI" placeholder="DOI or link to the publication" />
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn add-btn" onclick="addPublication()">Add Another Publication</button>
+
+      <!-- Volunteer Experience -->
+      <h3>Volunteer Experience</h3>
+      <div id="volunteer-section">
+        <div class="volunteer-entry">
+          <div class="form-group">
+            <label for="volRole">Role</label>
+            <input type="text" class="volRole" placeholder="Volunteer Teacher" required />
+          </div>
+          <div class="form-group">
+            <label for="volOrg">Organization</label>
+            <input type="text" class="volOrg" placeholder="Local Community Center" required />
+          </div>
+          <div class="form-group">
+            <label for="volDuration">Duration</label>
+            <input type="text" class="volDuration" placeholder="Jan 2023 - Present" required />
+          </div>
+          <div class="form-group">
+            <label for="volDescription">Description</label>
+            <textarea class="volDescription" placeholder="Describe your responsibilities and impact..."></textarea>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn add-btn" onclick="addVolunteer()">Add Another Volunteer Experience</button>
+
+      <!-- Professional Memberships -->
+      <h3>Professional Memberships</h3>
+      <div id="memberships-section">
+        <div class="membership-entry">
+          <div class="form-group">
+            <label for="memOrg">Organization</label>
+            <input type="text" class="memOrg" placeholder="IEEE" required />
+          </div>
+          <div class="form-group">
+            <label for="memType">Membership Type</label>
+            <input type="text" class="memType" placeholder="Professional Member" required />
+          </div>
+          <div class="form-group">
+            <label for="memYear">Since Year</label>
+            <input type="text" class="memYear" placeholder="2020" required />
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn add-btn" onclick="addMembership()">Add Another Membership</button>
+
+      <!-- References -->
+      <h3>References</h3>
+      <div id="references-section">
+        <div class="reference-entry">
+          <div class="form-group">
+            <label for="refName">Name</label>
+            <input type="text" class="refName" placeholder="Dr. John Smith" required />
+          </div>
+          <div class="form-group">
+            <label for="refTitle">Title</label>
+            <input type="text" class="refTitle" placeholder="Senior Software Engineer" required />
+          </div>
+          <div class="form-group">
+            <label for="refOrg">Organization</label>
+            <input type="text" class="refOrg" placeholder="Google Inc." required />
+          </div>
+          <div class="form-group">
+            <label for="refEmail">Email</label>
+            <input type="email" class="refEmail" placeholder="john.smith@example.com" required />
+          </div>
+          <div class="form-group">
+            <label for="refPhone">Phone</label>
+            <input type="text" class="refPhone" placeholder="+1-234-567-8900" required />
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn add-btn" onclick="addReference()">Add Another Reference</button>
+
+      <button type="button" class="btn" onclick="generateResume()">Generate Resume</button>
+    </form>
+
+    <!-- LaTeX Code Preview -->
+    <div class="resume-preview">
+      <h2>
+        Generated LaTeX Code
+        <button class="copy-btn" onclick="copyToClipboard()">
+          <i class="fas fa-copy"></i> Copy Code
+        </button>
+      </h2>
+      <textarea class="latex-code" id="latexCode" readonly></textarea>
+    </div>
+  </div>
+
+  <script>
+    // Function to add a new education entry
+    function addEducation() {
+      const educationSection = document.getElementById('education-section');
+      const newEducationEntry = document.createElement('div');
+      newEducationEntry.classList.add('education-entry');
+      newEducationEntry.innerHTML = `
+        <div class="form-group">
+          <label for="degreeName">Degree Name</label>
+          <input type="text" class="degreeName" placeholder="B.Tech in Computer Science" required>
+        </div>
+        <div class="form-group">
+          <label for="degreeCollege">College Name</label>
+          <input type="text" class="degreeCollege" placeholder="ABC College" required>
+        </div>
+        <div class="form-group">
+          <label for="degreeUniversity">University Name</label>
+          <input type="text" class="degreeUniversity" placeholder="XYZ University" required>
+        </div>
+        <div class="form-group">
+          <label for="degreeYear">Degree Year</label>
+          <input type="text" class="degreeYear" placeholder="2021" required>
+        </div>
+        <div class="form-group">
+          <label for="degreeCGPA">Degree CGPA</label>
+          <input type="text" class="degreeCGPA" placeholder="9.5" required>
+        </div>
+      `;
+      educationSection.appendChild(newEducationEntry);
+    }
+
+    // Function to add a new experience entry
+    function addExperience() {
+      const experienceSection = document.getElementById('experience-section');
+      const newExperienceEntry = document.createElement('div');
+      newExperienceEntry.classList.add('experience-entry');
+      newExperienceEntry.innerHTML = `
+        <div class="form-group">
+          <label for="expTitle">Job Title</label>
+          <input type="text" class="expTitle" placeholder="Software Engineer" required>
+        </div>
+        <div class="form-group">
+          <label for="expCompany">Company Name</label>
+          <input type="text" class="expCompany" placeholder="ABC Corp" required>
+        </div>
+        <div class="form-group">
+          <label for="expLocation">Location</label>
+          <input type="text" class="expLocation" placeholder="Austin, TX" required>
+        </div>
+        <div class="form-group">
+          <label for="expStartDate">Start Date</label>
+          <input type="text" class="expStartDate" placeholder="June 2020" required>
+        </div>
+        <div class="form-group">
+          <label for="expEndDate">End Date</label>
+          <input type="text" class="expEndDate" placeholder="Present" required>
+        </div>
+        <div class="form-group">
+          <label for="expResponsibilities">Responsibilities</label>
+          <textarea class="expResponsibilities" placeholder="Developed web applications using React..."></textarea>
+        </div>
+      `;
+      experienceSection.appendChild(newExperienceEntry);
+    }
+
+    // Function to add a new project entry
+    function addProject() {
+      const projectsSection = document.getElementById('projects-section');
+      const newProjectEntry = document.createElement('div');
+      newProjectEntry.classList.add('project-entry');
+      newProjectEntry.innerHTML = `
+        <div class="form-group">
+          <label for="projectName">Project Name</label>
+          <input type="text" class="projectName" placeholder="Gitlytics" required />
+        </div>
+        <div class="form-group">
+          <label for="projectTech">Technologies Used</label>
+          <input type="text" class="projectTech" placeholder="Python, Flask, React" required />
+        </div>
+        <div class="form-group">
+          <label for="projectDescription">Project Description</label>
+          <textarea class="projectDescription" placeholder="Developed a full-stack web application..."></textarea>
+        </div>
+      `;
+      projectsSection.appendChild(newProjectEntry);
+    }
+
+    // Function to add a new certification entry
+    function addCertification() {
+      const certificationsSection = document.getElementById('certifications-section');
+      const newCertificationEntry = document.createElement('div');
+      newCertificationEntry.classList.add('certification-entry');
+      newCertificationEntry.innerHTML = `
+        <div class="form-group">
+          <label for="certName">Certification Name</label>
+          <input type="text" class="certName" placeholder="AWS Certified Developer" required />
+        </div>
+        <div class="form-group">
+          <label for="certOrg">Issuing Organization</label>
+          <input type="text" class="certOrg" placeholder="Amazon" required />
+        </div>
+        <div class="form-group">
+          <label for="certYear">Year</label>
+          <input type="text" class="certYear" placeholder="2022" required />
+        </div>
+      `;
+      certificationsSection.appendChild(newCertificationEntry);
+    }
+
+    // Function to add a new award entry
+    function addAward() {
+      const awardsSection = document.getElementById('awards-section');
+      const newAwardEntry = document.createElement('div');
+      newAwardEntry.classList.add('award-entry');
+      newAwardEntry.innerHTML = `
+        <div class="form-group">
+          <label for="awardName">Award Name</label>
+          <input type="text" class="awardName" placeholder="Best Employee of the Year" required />
+        </div>
+        <div class="form-group">
+          <label for="awardOrg">Issuing Organization</label>
+          <input type="text" class="awardOrg" placeholder="ABC Corporation" required />
+        </div>
+        <div class="form-group">
+          <label for="awardYear">Year</label>
+          <input type="text" class="awardYear" placeholder="2023" required />
+        </div>
+        <div class="form-group">
+          <label for="awardDescription">Description</label>
+          <textarea class="awardDescription" placeholder="Brief description of the award and its significance..."></textarea>
+        </div>
+      `;
+      awardsSection.appendChild(newAwardEntry);
+    }
+
+    // Function to add a new publication entry
+    function addPublication() {
+      const publicationsSection = document.getElementById('publications-section');
+      const newPublicationEntry = document.createElement('div');
+      newPublicationEntry.classList.add('publication-entry');
+      newPublicationEntry.innerHTML = `
+        <div class="form-group">
+          <label for="pubTitle">Publication Title</label>
+          <input type="text" class="pubTitle" placeholder="Title of your paper/research" required />
+        </div>
+        <div class="form-group">
+          <label for="pubAuthors">Authors</label>
+          <input type="text" class="pubAuthors" placeholder="List of authors (e.g., Smith, J., Doe, R.)" required />
+        </div>
+        <div class="form-group">
+          <label for="pubVenue">Publication Venue</label>
+          <input type="text" class="pubVenue" placeholder="Journal/Conference name" required />
+        </div>
+        <div class="form-group">
+          <label for="pubYear">Year</label>
+          <input type="text" class="pubYear" placeholder="2023" required />
+        </div>
+        <div class="form-group">
+          <label for="pubDOI">DOI/Link (optional)</label>
+          <input type="text" class="pubDOI" placeholder="DOI or link to the publication" />
+        </div>
+      `;
+      publicationsSection.appendChild(newPublicationEntry);
+    }
+
+    // Function to add a new volunteer experience entry
+    function addVolunteer() {
+      const volunteerSection = document.getElementById('volunteer-section');
+      const newVolunteerEntry = document.createElement('div');
+      newVolunteerEntry.classList.add('volunteer-entry');
+      newVolunteerEntry.innerHTML = `
+        <div class="form-group">
+          <label for="volRole">Role</label>
+          <input type="text" class="volRole" placeholder="Volunteer Teacher" required />
+        </div>
+        <div class="form-group">
+          <label for="volOrg">Organization</label>
+          <input type="text" class="volOrg" placeholder="Local Community Center" required />
+        </div>
+        <div class="form-group">
+          <label for="volDuration">Duration</label>
+          <input type="text" class="volDuration" placeholder="Jan 2023 - Present" required />
+        </div>
+        <div class="form-group">
+          <label for="volDescription">Description</label>
+          <textarea class="volDescription" placeholder="Describe your responsibilities and impact..."></textarea>
+        </div>
+      `;
+      volunteerSection.appendChild(newVolunteerEntry);
+    }
+
+    // Function to add a new membership entry
+    function addMembership() {
+      const membershipsSection = document.getElementById('memberships-section');
+      const newMembershipEntry = document.createElement('div');
+      newMembershipEntry.classList.add('membership-entry');
+      newMembershipEntry.innerHTML = `
+        <div class="form-group">
+          <label for="memOrg">Organization</label>
+          <input type="text" class="memOrg" placeholder="IEEE" required />
+        </div>
+        <div class="form-group">
+          <label for="memType">Membership Type</label>
+          <input type="text" class="memType" placeholder="Professional Member" required />
+        </div>
+        <div class="form-group">
+          <label for="memYear">Since Year</label>
+          <input type="text" class="memYear" placeholder="2020" required />
+        </div>
+      `;
+      membershipsSection.appendChild(newMembershipEntry);
+    }
+
+    // Function to add a new reference entry
+    function addReference() {
+      const referencesSection = document.getElementById('references-section');
+      const newReferenceEntry = document.createElement('div');
+      newReferenceEntry.classList.add('reference-entry');
+      newReferenceEntry.innerHTML = `
+        <div class="form-group">
+          <label for="refName">Name</label>
+          <input type="text" class="refName" placeholder="Dr. John Smith" required />
+        </div>
+        <div class="form-group">
+          <label for="refTitle">Title</label>
+          <input type="text" class="refTitle" placeholder="Senior Software Engineer" required />
+        </div>
+        <div class="form-group">
+          <label for="refOrg">Organization</label>
+          <input type="text" class="refOrg" placeholder="Google Inc." required />
+        </div>
+        <div class="form-group">
+          <label for="refEmail">Email</label>
+          <input type="email" class="refEmail" placeholder="john.smith@example.com" required />
+        </div>
+        <div class="form-group">
+          <label for="refPhone">Phone</label>
+          <input type="text" class="refPhone" placeholder="+1-234-567-8900" required />
+        </div>
+      `;
+      referencesSection.appendChild(newReferenceEntry);
+    }
+
+    // Function to generate LaTeX code
+    function generateResume() {
+      // Get input values
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      const email = document.getElementById('email').value;
+      const linkedin = document.getElementById('linkedin').value;
+      const github = document.getElementById('github').value;
+      const summary = document.getElementById('summary').value;
+
+      // Education
+      const educationEntries = document.querySelectorAll('.education-entry');
+      let educationLatex = '';
+      educationEntries.forEach(entry => {
+        const degreeName = entry.querySelector('.degreeName').value;
+        const degreeCollege = entry.querySelector('.degreeCollege').value;
+        const degreeUniversity = entry.querySelector('.degreeUniversity').value;
+        const degreeYear = entry.querySelector('.degreeYear').value;
+        const degreeCGPA = entry.querySelector('.degreeCGPA').value;
+        educationLatex += `
+          \\resumeSubheading
+            {${degreeName}}{${degreeYear}}
+            {${degreeCollege}, ${degreeUniversity}, CGPA: ${degreeCGPA}}{}
+        `;
+      });
+
+      // Experience
+      const experienceEntries = document.querySelectorAll('.experience-entry');
+      let experienceLatex = '';
+      experienceEntries.forEach(entry => {
+        const expTitle = entry.querySelector('.expTitle').value;
+        const expCompany = entry.querySelector('.expCompany').value;
+        const expLocation = entry.querySelector('.expLocation').value;
+        const expStartDate = entry.querySelector('.expStartDate').value;
+        const expEndDate = entry.querySelector('.expEndDate').value;
+        const expResponsibilities = entry.querySelector('.expResponsibilities').value;
+        experienceLatex += `
+          \\resumeSubheading
+            {${expTitle}}{${expStartDate} -- ${expEndDate}}
+            {${expCompany}, ${expLocation}}{}
+            \\resumeItemListStart
+              \\resumeItem{${expResponsibilities}}
+            \\resumeItemListEnd
+        `;
+      });
+
+      // Projects
+      const projectEntries = document.querySelectorAll('.project-entry');
+      let projectsLatex = '';
+      projectEntries.forEach(entry => {
+        const projectName = entry.querySelector('.projectName').value;
+        const projectTech = entry.querySelector('.projectTech').value;
+        const projectDescription = entry.querySelector('.projectDescription').value;
+        projectsLatex += `
+    \\resumeProjectHeading
+      {\\textbf{${projectName}} $|$ \\emph{${projectTech}}}{}
+      \\resumeItemListStart
+        \\resumeItem{${projectDescription}}
+      \\resumeItemListEnd
+        `;
+      });
+
+      // Certifications
+      const certificationEntries = document.querySelectorAll('.certification-entry');
+      let certificationsLatex = '';
+      certificationEntries.forEach(entry => {
+        const certName = entry.querySelector('.certName').value;
+        const certOrg = entry.querySelector('.certOrg').value;
+        const certYear = entry.querySelector('.certYear').value;
+        certificationsLatex += `
+    \\resumeSubheading
+      {${certName}}{${certYear}}
+      {${certOrg}}{}
+        `;
+      });
+
+      // Skills
+      const skills = document.getElementById('skills').value.split(',');
+
+      // Languages
+      const languages = document.getElementById('languages').value.split(',');
+
+      // Hobbies
+      const hobbies = document.getElementById('hobbies').value.split(',');
+
+      // Get all the new sections data
+      const awardEntries = document.querySelectorAll('.award-entry');
+      let awardsLatex = '';
+      awardEntries.forEach(entry => {
+        const awardName = entry.querySelector('.awardName').value;
+        const awardOrg = entry.querySelector('.awardOrg').value;
+        const awardYear = entry.querySelector('.awardYear').value;
+        const awardDescription = entry.querySelector('.awardDescription').value;
+        awardsLatex += `
+    \\resumeSubheading
+      {${awardName}}{${awardYear}}
+      {${awardOrg}}{}
+      \\resumeItemListStart
+        \\resumeItem{${awardDescription}}
+      \\resumeItemListEnd
+        `;
+      });
+
+      const publicationEntries = document.querySelectorAll('.publication-entry');
+      let publicationsLatex = '';
+      publicationEntries.forEach(entry => {
+        const pubTitle = entry.querySelector('.pubTitle').value;
+        const pubAuthors = entry.querySelector('.pubAuthors').value;
+        const pubVenue = entry.querySelector('.pubVenue').value;
+        const pubYear = entry.querySelector('.pubYear').value;
+        const pubDOI = entry.querySelector('.pubDOI').value;
+        publicationsLatex += `
+    \\resumeSubheading
+      {${pubTitle}}{${pubYear}}
+      {${pubVenue}}{}
+      \\resumeItemListStart
+        \\resumeItem{Authors: ${pubAuthors}}
+        ${pubDOI ? `\\resumeItem{DOI: ${pubDOI}}` : ''}
+      \\resumeItemListEnd
+        `;
+      });
+
+      const volunteerEntries = document.querySelectorAll('.volunteer-entry');
+      let volunteerLatex = '';
+      volunteerEntries.forEach(entry => {
+        const volRole = entry.querySelector('.volRole').value;
+        const volOrg = entry.querySelector('.volOrg').value;
+        const volDuration = entry.querySelector('.volDuration').value;
+        const volDescription = entry.querySelector('.volDescription').value;
+        volunteerLatex += `
+    \\resumeSubheading
+      {${volRole}}{${volDuration}}
+      {${volOrg}}{}
+      \\resumeItemListStart
+        \\resumeItem{${volDescription}}
+      \\resumeItemListEnd
+        `;
+      });
+
+      const membershipEntries = document.querySelectorAll('.membership-entry');
+      let membershipsLatex = '';
+      membershipEntries.forEach(entry => {
+        const memOrg = entry.querySelector('.memOrg').value;
+        const memType = entry.querySelector('.memType').value;
+        const memYear = entry.querySelector('.memYear').value;
+        membershipsLatex += `
+    \\resumeSubheading
+      {${memOrg}}{Since ${memYear}}
+      {${memType}}{}
+        `;
+      });
+
+      const referenceEntries = document.querySelectorAll('.reference-entry');
+      let referencesLatex = '';
+      referenceEntries.forEach(entry => {
+        const refName = entry.querySelector('.refName').value;
+        const refTitle = entry.querySelector('.refTitle').value;
+        const refOrg = entry.querySelector('.refOrg').value;
+        const refEmail = entry.querySelector('.refEmail').value;
+        const refPhone = entry.querySelector('.refPhone').value;
+        referencesLatex += `
+    \\resumeSubheading
+      {${refName}}{${refTitle}}
+      {${refOrg}}{}
+      \\resumeItemListStart
+        \\resumeItem{Email: ${refEmail} $|$ Phone: ${refPhone}}
+      \\resumeItemListEnd
+        `;
+      });
+
+      // Generate LaTeX code
+      let latexCode = `
+\\documentclass[letterpaper,11pt]{article}
+
+\\usepackage{latexsym}
+\\usepackage[empty]{fullpage}
+\\usepackage{titlesec}
+\\usepackage{marvosym}
+\\usepackage[usenames,dvipsnames]{color}
+\\usepackage{verbatim}
+\\usepackage{enumitem}
+\\usepackage[hidelinks]{hyperref}
+\\usepackage{fancyhdr}
+\\usepackage[english]{babel}
+\\usepackage{tabularx}
+\\input{glyphtounicode}
+
+\\pagestyle{fancy}
+\\fancyhf{} % clear all header and footer fields
+\\fancyfoot{}
+\\renewcommand{\\headrulewidth}{0pt}
+\\renewcommand{\\footrulewidth}{0pt}
+
+\\addtolength{\\oddsidemargin}{-0.5in}
+\\addtolength{\\evensidemargin}{-0.5in}
+\\addtolength{\\textwidth}{1in}
+\\addtolength{\\topmargin}{-.5in}
+\\addtolength{\\textheight}{1.0in}
+
+\\urlstyle{same}
+
+\\raggedbottom
+\\raggedright
+\\setlength{\\tabcolsep}{0in}
+
+\\titleformat{\\section}{
+  \\vspace{-4pt}\\scshape\\raggedright\\large
+}{}{0em}{}[\\color{black}\\titlerule \\vspace{-5pt}]
+
+\\pdfgentounicode=1
+
+\\begin{document}
+
+\\begin{center}
+    \\textbf{\\Huge \\scshape ${name}} \\\\ \\vspace{1pt}
+    \\small ${phone} $|$ \\href{mailto:${email}}{\\underline{${email}}} $|$ 
+    \\href{${linkedin}}{\\underline{${linkedin}}} $|$
+    \\href{${github}}{\\underline{${github}}}
+\\end{center}
+
+\\section{Summary}
+  ${summary}
+
+\\section{Education}
+  \\resumeSubHeadingListStart
+    ${educationLatex}
+  \\resumeSubHeadingListEnd
+
+\\section{Experience}
+  \\resumeSubHeadingListStart
+    ${experienceLatex}
+  \\resumeSubHeadingListEnd
+
+\\section{Projects}
+  \\resumeSubHeadingListStart
+    ${projectsLatex}
+  \\resumeSubHeadingListEnd
+
+\\section{Certifications}
+  \\resumeSubHeadingListStart
+    ${certificationsLatex}
+  \\resumeSubHeadingListEnd
+
+\\section{Technical Skills}
+  \\begin{itemize}[leftmargin=0.15in, label={}]
+    \\small{\\item{
+      \\textbf{Languages}{: ${skills.join(', ')}}
+    }}
+  \\end{itemize}
+
+\\section{Languages}
+  \\begin{itemize}[leftmargin=0.15in, label={}]
+    \\small{\\item{
+      \\textbf{Languages Known}{: ${languages.join(', ')}}
+    }}
+  \\end{itemize}
+
+\\section{Hobbies}
+  \\begin{itemize}[leftmargin=0.15in, label={}]
+    \\small{\\item{
+      \\textbf{Hobbies}{: ${hobbies.join(', ')}}
+    }}
+  \\end{itemize}
+
+\\section{Awards \\& Achievements}
+  \\resumeSubHeadingListStart
+    ${awardsLatex}
+  \\resumeSubHeadingListEnd
+
+\\section{Publications \\& Research}
+  \\resumeSubHeadingListStart
+    ${publicationsLatex}
+  \\resumeSubHeadingListEnd
+
+\\section{Volunteer Experience}
+  \\resumeSubHeadingListStart
+    ${volunteerLatex}
+  \\resumeSubHeadingListEnd
+
+\\section{Professional Memberships}
+  \\resumeSubHeadingListStart
+    ${membershipsLatex}
+  \\resumeSubHeadingListEnd
+
+\\section{References}
+  \\resumeSubHeadingListStart
+    ${referencesLatex}
+  \\resumeSubHeadingListEnd
+
+\\end{document}
+`;
+
+      // Display LaTeX code
+      document.getElementById('latexCode').value = latexCode;
+    }
+
+    // Add this new function for clipboard functionality
+    function copyToClipboard() {
+      const latexCode = document.getElementById('latexCode');
+      latexCode.select();
+      document.execCommand('copy');
+      
+      // Show success message
+      const successMsg = document.createElement('div');
+      successMsg.className = 'copy-success';
+      successMsg.innerHTML = '<i class="fas fa-check"></i> Code copied to clipboard!';
+      document.body.appendChild(successMsg);
+      
+      // Remove success message after 3 seconds
+      setTimeout(() => {
+        successMsg.remove();
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

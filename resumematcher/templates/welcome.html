@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+            --info-color: #2bcbba;
+            --neon-glow: 0 0 10px rgba(52, 152, 219, 0.5);
+            --background-color: #f8f9fa;
+        }
+
+        body {
+            background-color: var(--background-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 30px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, #ffffff 20px, transparent 1%) center,
+                linear-gradient(#ffffff 20px, transparent 1%) center,
+                rgba(52, 152, 219, 0.1);
+            background-size: 22px 22px;
+            z-index: -1;
+        }
+
+        .welcome-header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: 
+                radial-gradient(circle at center, 
+                    rgba(52, 152, 219, 0.4) 0%,
+                    transparent 70%);
+            animation: pulse 4s infinite;
+        }
+
+        .terminal-window {
+            background: var(--primary-color);
+            border-radius: 10px;
+            padding: 20px;
+            color: #ecf0f1;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .terminal-header {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .terminal-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-close { background: #ff5f56; }
+        .terminal-minimize { background: #ffbd2e; }
+        .terminal-maximize { background: #27c93f; }
+
+        .terminal-content {
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .terminal-prompt::before {
+            content: '$ ';
+            color: var(--accent-color);
+        }
+
+        .terminal-cursor {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stats-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-icon::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: currentColor;
+            opacity: 0.2;
+            border-radius: inherit;
+        }
+
+        .progress-ring {
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 8;
+            transform: rotate(-90deg);
+            transform-origin: center;
+            transition: all 0.3s;
+        }
+
+        .progress-ring .progress-background {
+            stroke: #eee;
+        }
+
+        .progress-ring .progress-value {
+            stroke: var(--accent-color);
+            stroke-linecap: round;
+        }
+
+        .quick-actions {
+            margin-top: 40px;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--neon-glow);
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(52, 152, 219, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .action-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .action-icon::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: currentColor;
+            opacity: 0.2;
+            border-radius: inherit;
+            transition: all 0.3s;
+        }
+
+        .action-card:hover .action-icon::after {
+            transform: scale(1.2);
+            opacity: 0.1;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--neon-glow);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .notification:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.2);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .badge-custom {
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .badge-success {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success-color);
+        }
+
+        .badge-warning {
+            background-color: rgba(241, 196, 15, 0.1);
+            color: var(--warning-color);
+        }
+
+        .typing-effect::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--accent-color);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+            transform-origin: left;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            font-size: 2em;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+        }
+
+        .premium-badge {
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: inline-block;
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .status-badge.active {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: var(--success-color);
+        }
+
+        .status-badge.warning {
+            background-color: rgba(241, 196, 15, 0.2);
+            color: var(--warning-color);
+        }
+    </style>
+</head>
+<body>
+    {% if user.is_admin %}
+    <!-- Admin Dashboard -->
+    <div class="welcome-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="mb-0">Welcome, {{ user.username }}</h2>
+                <p class="text-muted mb-0">Admin Dashboard Overview</p>
+            </div>
+            <div class="d-flex align-items-center">
+                <span class="status-badge active me-3">System Online</span>
+                <button class="btn btn-outline-primary">
+                    <i class="fas fa-sync-alt"></i> Refresh Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h6 class="text-muted">Active Users</h6>
+                <h3>{{ stats.active_users }}</h3>
+                <p class="mb-0 text-success">
+                    <i class="fas fa-arrow-up"></i> 12% increase
+                </p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h6 class="text-muted">Resume Uploads</h6>
+                <h3>{{ stats.resume_uploads }}</h3>
+                <p class="mb-0 text-success">
+                    <i class="fas fa-arrow-up"></i> 8% increase
+                </p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h6 class="text-muted">Premium Users</h6>
+                <h3>{{ stats.premium_users }}</h3>
+                <p class="mb-0 text-success">
+                    <i class="fas fa-arrow-up"></i> 15% increase
+                </p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h6 class="text-muted">System Load</h6>
+                <h3>{{ stats.system_load }}%</h3>
+                <p class="mb-0 text-warning">
+                    <i class="fas fa-arrow-up"></i> 5% increase
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="chart-container">
+                <h5>User Activity</h5>
+                <canvas id="userActivityChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="chart-container">
+                <h5>User Distribution</h5>
+                <canvas id="userDistributionChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- User Dashboard -->
+    <div class="welcome-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="mb-0">Welcome, {{ user.username }}</h2>
+                <p class="text-muted mb-0">Let's enhance your job search journey</p>
+            </div>
+            {% if user.account_type == 'premium' %}
+            <span class="premium-badge">
+                <i class="fas fa-crown"></i> Premium Member
+            </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h6 class="text-muted">Resume Score</h6>
+                <h3>{{ user_stats.resume_score }}%</h3>
+                <p class="mb-0 text-success">
+                    <i class="fas fa-arrow-up"></i> Improving
+                </p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h6 class="text-muted">Job Matches</h6>
+                <h3>{{ user_stats.job_matches }}</h3>
+                <p class="mb-0 text-info">
+                    <i class="fas fa-chart-line"></i> Active
+                </p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h6 class="text-muted">Applications</h6>
+                <h3>{{ user_stats.applications }}</h3>
+                <p class="mb-0 text-primary">
+                    <i class="fas fa-paper-plane"></i> Sent
+                </p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h6 class="text-muted">Profile Views</h6>
+                <h3>{{ user_stats.profile_views }}</h3>
+                <p class="mb-0 text-success">
+                    <i class="fas fa-eye"></i> Visibility
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <a href="{{ url_for('resumeparser') }}" class="text-decoration-none">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h5>Resume Parser</h5>
+                    <p class="text-muted mb-0">Extract and analyze your resume content</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('resumebuilder') }}" class="text-decoration-none">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-pencil-alt"></i>
+                    </div>
+                    <h5>Resume Builder</h5>
+                    <p class="text-muted mb-0">Create professional resumes easily</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('matchresume') }}" class="text-decoration-none">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h5>Resume Matcher</h5>
+                    <p class="text-muted mb-0">Match your resume with job descriptions</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <a href="{{ url_for('atschecker') }}" class="text-decoration-none">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h5>ATS Checker</h5>
+                    <p class="text-muted mb-0">Optimize your resume for ATS systems</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('aichatbot') }}" class="text-decoration-none">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h5>AI Assistant</h5>
+                    <p class="text-muted mb-0">Get personalized career advice</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('profile') }}" class="text-decoration-none">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h5>My Profile</h5>
+                    <p class="text-muted mb-0">Manage your account and settings</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <script>
+        {% if user.is_admin %}
+        document.addEventListener('DOMContentLoaded', function() {
+            // User Activity Chart
+            const activityCtx = document.getElementById('userActivityChart').getContext('2d');
+            new Chart(activityCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'New Users',
+                        data: [65, 59, 80, 81, 56, 55],
+                        borderColor: '#3498db',
+                        tension: 0.4,
+                        fill: false
+                    }, {
+                        label: 'Active Users',
+                        data: [28, 48, 40, 19, 86, 27],
+                        borderColor: '#2ecc71',
+                        tension: 0.4,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+
+            // User Distribution Chart
+            const distributionCtx = document.getElementById('userDistributionChart').getContext('2d');
+            new Chart(distributionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Free Users', 'Premium Users', 'Inactive Users'],
+                    datasets: [{
+                        data: [65, 25, 10],
+                        backgroundColor: ['#3498db', '#2ecc71', '#e74c3c']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        });
+        {% endif %}
+    </script>
+</body>
+</html> 
